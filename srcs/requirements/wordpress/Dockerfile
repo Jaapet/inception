@@ -1,4 +1,4 @@
-FROM alpine:3.19.1
+FROM alpine:3.19
 
 RUN apk update && apk upgrade && apk add --no-cache wget curl php82 php82-fpm mariadb-client php82-mysqli php82-phar php82-openssl php82-pdo_mysql php82-curl php82-json php82-dom php82-session php82-mbstring php82-simplexml php82-tokenizer php82-xml php82-xmlwriter php82-xmlreader
 

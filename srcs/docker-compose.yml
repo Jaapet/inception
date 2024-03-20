@@ -1,49 +1,53 @@
 version: '3'
 
 services:
+  nginx:
+    build: ./requirements/nginx
+    container_name: nginx
+    image: nginx
+    ports:
+      - "443:443"
+    env_file:
+      - .env
+    volumes:
+      - ${VOLUME_PATH}/wordpress:/var/www/html
+    depends_on:
+      - wordpress
+    networks:
+      - docker-network
+    restart: unless-stopped
 
-	nginx:
-		build: ./requirements/nginx
-		container_name: nginx
-		image: nginx
-		ports:
-			- "443:443"
-		env_file:
-			- .env
-		volumes:
-			- ${VOLUME_PATH}/wordpress:/var/www/html
-		depends_on:
-			- wordpress
-		networks:
-			- docker-network
-		restart: unless-stopped
+  wordpress:
+    build: ./requirements/wordpress
+    container_name: wordpress
+    image: wordpress
+    env_file:
+      - .env
+    volumes:
+      - ${VOLUME_PATH}/wordpress:/var/www/html
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    networks:
+      - docker-network
+    restart: unless-stopped
 
-	wordpress:
-		build: ./requirements/wordpress
-		container_name: wordpress
-		image: wordpress
-		env_file:
-			- .env
-		volumes:
-			- ${VOLUME_PATH}/wordpress:/var/www/html
-		depends_on:
-			- mariadb
-		networks:
-			- docker-network
-		restart: unless-stopped
-
-	mariadb:
-		build: ./requirements/mariadb
-		container_name: mariadb
-		image: mariadb
-		env_file:
-			- .env
-		volumes:
-			- ${VOLUME_PATH}/mariadb:/var/lib/mysql
-		networks:
-			- docker-network
-		restart: unless-stopped
-
+  mariadb:
+    build: ./requirements/mariadb
+    container_name: mariadb
+    image: mariadb
+    env_file:
+      - .env
+    volumes:
+      - ${VOLUME_PATH}/mariadb:/var/lib/mysql
+    networks:
+      - docker-network
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'mariadb is healthy'"]
+      interval: 20s
+      timeout: 30s
+      retries: 5
+    restart: unless-stopped
 networks:
-	docker-network:
-		driver: bridge
+  docker-network:
+    driver: bridge
