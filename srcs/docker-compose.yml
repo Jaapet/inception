@@ -24,7 +24,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ${VOLUME_PATH}/wordpress:/var/www/html
+      - wordpress_volume:/var/www/html
     depends_on:
       mariadb:
         condition: service_healthy
@@ -39,7 +39,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ${VOLUME_PATH}/mariadb:/var/lib/mysql
+      - mariadb_volume:/var/lib/mysql
     networks:
       - docker-network
     healthcheck:
@@ -51,3 +51,19 @@ services:
 networks:
   docker-network:
     driver: bridge
+volumes:
+    mariadb_volume:
+        driver: local
+        driver_opts:
+            o: bind
+            type: none
+            device: ${VOLUME_PATH}/mariadb
+        name: mariadb
+
+    wordpress_volume:
+        driver: local
+        driver_opts:
+            o: bind
+            type: none
+            device: ${VOLUME_PATH}/wordpress
+        name: wordpress

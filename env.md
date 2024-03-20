@@ -1,3 +1,10 @@
+###
+docker exec -it mariadb /bin/sh
+mysql -uroot -p
+USE wordpress;
+SHOW TABLES;
+
+###
 VOLUME_PATH=/home/ndesprez/data
 
 SQL_USR=usera
